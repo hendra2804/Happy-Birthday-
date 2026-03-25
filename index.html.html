@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Moe!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a2a3a 0%, #050505 100%);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            padding: 40px 25px;
+            width: 85%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+
+        .image-container {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 3px solid #d4af37;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            background: #222;
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin: 10px 0;
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #ddd;
+            margin-bottom: 25px;
+        }
+
+        .celebrate-btn {
+            background: linear-gradient(45deg, #d4af37, #f2d06b);
+            color: #000;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            z-index: 999;
+            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            border-radius: 50%;
+            animation: moveUp 2.5s ease-out forwards;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80vh) scale(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card">
+        <div class="image-container">
+            <img src="https://papiphotos.remax-im.com/Person/100907376/MainPhoto_cropped/MainPhoto_cropped.jpg" 
+                 alt="Moe" 
+                 class="profile-pic"
+                 onerror="this.src='https://ui-avatars.com/api/?name=Moe+Asgarian&background=d4af37&color=fff&size=256'">
+        </div>
+        
+        <h1>Happy Birthday Moe Asgarian!</h1>
+        <p>Wishing you a spectacular day filled with success, happiness, and everything you've been working toward.</p>
+        
+        <button class="celebrate-btn" onclick="fire()" ontouchstart="fire()">Celebrate 🥂</button>
+    </div>
+
+    <script>
+        function fire() {
+            const colors = ['#d4af37', '#ffffff', '#f2d06b'];
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                const size = Math.random() * 6 + 4 + 'px';
+                sparkle.style.width = size;
+                sparkle.style.height = size;
+                sparkle.style.left = (Math.random() * 100) + 'vw';
+                sparkle.style.top = '80vh';
+                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.boxShadow = `0 0 8px ${sparkle.style.backgroundColor}`;
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 2500);
+            }
+        }
+    </script>
+</body>
+</html>
