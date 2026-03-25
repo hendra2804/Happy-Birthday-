@@ -106,4 +106,67 @@
         @keyframes moveUpAndSpread {
             0% { 
                 transform: translateY(0) scale(0) rotate(0deg); 
-                opacity
+                opacity: 0; 
+            }
+            10% {
+                transform: translateY(-20px) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                /* Move far above the top of the card and spread widely */
+                transform: translateY(-500px) scale(0) rotate(180deg); 
+                opacity: 0; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-card">
+        <div class="image-container">
+            <img src="https://papiphotos.remax-im.com/Person/100907376/MainPhoto_cropped/MainPhoto_cropped.jpg" 
+                 alt="Moe" 
+                 class="profile-pic"
+                 onerror="this.src='https://ui-avatars.com/api/?name=Moe+Asgarian&background=d4af37&color=fff&size=256'">
+        </div>
+        
+        <h1>Happy Birthday Moe Asgarian!</h1>
+        <p>Wishing you a spectacular day filled with success, happiness, and everything you've been working toward.</p>
+        
+        <button class="celebrate-btn" onclick="fire()" ontouchstart="fire()">Celebrate 🥂</button>
+    </div>
+
+    <script>
+        function fire() {
+            // Reduced count for better performance/look
+            const colors = ['#d4af37', '#ffffff', '#f2d06b'];
+            // Place sparkles inside the card instead of the body
+            const card = document.querySelector('.main-card');
+            
+            for (let i = 0; i < 25; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                const size = Math.random() * 8 + 4 + 'px';
+                sparkle.style.width = size;
+                sparkle.style.height = size;
+                
+                // Position initial spawn point near the button inside the card
+                sparkle.style.bottom = '60px'; // Approx button height
+                sparkle.style.left = (Math.random() * 80 + 10) + '%'; // Spread across card width
+                
+                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.boxShadow = `0 0 10px ${sparkle.style.backgroundColor}`;
+                
+                // Randomize speed and start delay
+                sparkle.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+                sparkle.style.animationDelay = (Math.random() * 0.2) + 's';
+
+                card.appendChild(sparkle);
+                
+                // Keep cleanup timeout slightly longer than max animation time
+                setTimeout(() => sparkle.remove(), 3500);
+            }
+        }
+    </script>
+</body>
+</html>
