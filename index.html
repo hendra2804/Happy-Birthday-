@@ -32,6 +32,8 @@
             max-width: 380px;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            /* Important for layering sparkles */
+            position: relative; 
             z-index: 10;
         }
 
@@ -44,6 +46,8 @@
             overflow: hidden;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             background: #222;
+            position: relative;
+            z-index: 11; /* Lower than sparkles, higher than background */
         }
 
         .profile-pic {
@@ -58,9 +62,11 @@
             font-size: 2.2rem;
             margin: 10px 0;
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728);
-            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text; /* Added for standard compatibility */
+            position: relative;
+            z-index: 11;
         }
 
         p {
@@ -68,6 +74,8 @@
             line-height: 1.5;
             color: #ddd;
             margin-bottom: 25px;
+            position: relative;
+            z-index: 11;
         }
 
         .celebrate-btn {
@@ -80,58 +88,22 @@
             text-transform: uppercase;
             cursor: pointer;
             position: relative;
-            z-index: 999;
+            z-index: 12; /* Ensure button is clickable over everything */
             box-shadow: 0 8px 15px rgba(212, 175, 55, 0.3);
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Fixed Sparkle Styling */
         .sparkle {
             position: absolute;
             pointer-events: none;
-            z-index: 5;
+            z-index: 999; /* Higher than ALL other content */
             border-radius: 50%;
-            animation: moveUp 2.5s ease-out forwards;
+            animation: moveUpAndSpread 2.5s ease-out forwards;
         }
 
-        @keyframes moveUp {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-80vh) scale(0); opacity: 0; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="main-card">
-        <div class="image-container">
-            <img src="https://papiphotos.remax-im.com/Person/100907376/MainPhoto_cropped/MainPhoto_cropped.jpg" 
-                 alt="Moe" 
-                 class="profile-pic"
-                 onerror="this.src='https://ui-avatars.com/api/?name=Moe+Asgarian&background=d4af37&color=fff&size=256'">
-        </div>
-        
-        <h1>Happy Birthday Moe Asgarian!</h1>
-        <p>Wishing you a spectacular day filled with success, happiness, and everything you've been working toward.</p>
-        
-        <button class="celebrate-btn" onclick="fire()" ontouchstart="fire()">Celebrate 🥂</button>
-    </div>
-
-    <script>
-        function fire() {
-            const colors = ['#d4af37', '#ffffff', '#f2d06b'];
-            for (let i = 0; i < 30; i++) {
-                const sparkle = document.createElement('div');
-                sparkle.className = 'sparkle';
-                const size = Math.random() * 6 + 4 + 'px';
-                sparkle.style.width = size;
-                sparkle.style.height = size;
-                sparkle.style.left = (Math.random() * 100) + 'vw';
-                sparkle.style.top = '80vh';
-                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                sparkle.style.boxShadow = `0 0 8px ${sparkle.style.backgroundColor}`;
-                document.body.appendChild(sparkle);
-                setTimeout(() => sparkle.remove(), 2500);
-            }
-        }
-    </script>
-</body>
-</html>
+        /* Improved Animation Path */
+        @keyframes moveUpAndSpread {
+            0% { 
+                transform: translateY(0) scale(0) rotate(0deg); 
+                opacity
