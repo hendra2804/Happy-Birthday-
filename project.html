@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Our Date</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --primary-dark: #c9184a;
+            --bg: #fff0f3;
+            --secondary: #800f2f;
+            --link: #0077cc;
+        }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg);
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 20px;
+        }
+        .card {
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
+            width: 100%; max-width: 420px;
+        }
+        h2 { color: var(--primary); text-align: center; margin-bottom: 5px; font-size: 28px; }
+        p.subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+        .field { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
+        
+        input, select, textarea {
+            width: 100%; padding: 12px; border: 2px solid #f0f0f0;
+            border-radius: 10px; box-sizing: border-box; font-size: 16px;
+            transition: all 0.3s ease; font-family: inherit;
+        }
+        input:focus, select:focus { border-color: var(--primary); outline: none; }
+        
+        .recommendation-box {
+            background: #fffafa; border: 1px dashed var(--primary);
+            border-radius: 10px; padding: 12px; margin-top: 10px;
+            font-size: 14px; display: none;
+        }
+        .recommendation-box a { color: var(--link); text-decoration: underline; font-weight: bold; }
+
+        button {
+            width: 100%; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; border: none; padding: 16px; border-radius: 12px;
+            font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+        .error { color: #d90429; font-size: 13px; margin-top: 5px; display: none; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Let's Go Hangout! ❤️</h2>
+    <p class="subtitle">First date</p>
+    
+    <form id="dateForm" action="https://formspree.io/f/mwvrgoak" method="POST">
+        
+        <div class="field">
+            <label>Your Email:</label>
+            <input type="email" name="email" placeholder="Human@gmail.com" required>
+        </div>
+
+        <div class="field">
+            <label for="date">Pick a day:</label>
+            <input type="date" id="date" name="selected_date" required>
+            <div id="dateError" class="error">⚠️ Only weekends or 2026 holidays, please!</div>
+        </div>
+
+        <div class="field">
+            <label>Where should we go?</label>
+            <select name="place" id="placeSelect" required>
+                <option value="" disabled selected>Pick a vibe...</option>
+                <option value="Hotpot">Hotpot Night 🍲</option>
+                <option value="Bubble Tea">Bubble Tea Date 🧋</option>
+                <option value="Italian Restaurant">Fancy Italian 🍝</option>
+                <option value="Movie Theater">Movies & Popcorn 🍿</option>
+                <option value="Coffee Shop">Cozy Coffee Date ☕</option>
+                <option value="Surprise Me">Surprise Me! ✨</option>
+                <option value="Something else">Something else...</option>
+            </select>
+            
+            <div id="recBox" class="recommendation-box">
+                📍 <strong>Suggested:</strong> <span id="recContent"></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Any specific spot or message?</label>
+            <textarea name="message" rows="2" placeholder="Can't wait to see you soon!"></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn">Send Invitation</button>
+    </form>
+</div>
+
+<script>
+    const dateInput = document.getElementById('date');
+    const dateError = document.getElementById('dateError');
+    const placeSelect = document.getElementById('placeSelect');
+    const recBox = document.getElementById('recBox');
+    const recContent = document.getElementById('recContent');
+    const form = document.getElementById('dateForm');
+
+    // 2026 Ontario Statutory Holidays
+    const holidays2026 = [
+        "2026-01-01", // New Year's
+        "2026-02-16", // Family Day
+        "2026-04-03", // Good Friday
+        "2026-05-18", // Victoria Day
+        "2026-07-01", // Canada Day
+        "2026-08-03", // Civic Holiday
+        "2026-09-07", // Labour Day
+        "2026-10-12", // Thanksgiving
+        "2026-12-25", // Christmas
+        "2026-12-28"  // Boxing Day (Observed)
+    ];
+
+    const recommendations = {
+        "Hotpot": { name: "Souper Hot Pot", link: "https://maps.app.goo.gl/dVh8k88TNpvz5e5E6" },
+        "Bubble Tea": { name: "HeyTea Lab", link: "https://maps.app.goo.gl/3AmuruppdPRxXpKA6" },
+        "Italian Restaurant": { name: "Don Alfonso 1890", link: "https://maps.app.goo.gl/A1B2C3D4E5F6" },
+        "Movie Theater": { name: "Scotiabank Theatre Toronto", link: "https://maps.app.goo.gl/H7I8J9K0L1M2" },
+        "Coffee Shop": { name: "Daily Dose Coffee Bar", link: "https://maps.app.goo.gl/ToRo6Tu3MUsB7Dg19" },
+        "Surprise Me": { name: "St. Lawrence Market", link: "https://maps.app.goo.gl/QvVQ4Gj9Cy9qLcRK7" },
+        "Something else": { name: "Please specify desired location", link: "https://www.google.com/maps/dir///@43.714761,-79.4533216,12z?entry=ttu&g_ep=EgoyMDI2MDMxOC4xIKXMDSoASAFQAw%3D%3D" }
+    };
+
+    placeSelect.addEventListener('change', function() {
+        const data = recommendations[this.value];
+        if (data) {
+            recContent.innerHTML = `<a href="${data.link}" target="_blank">${data.name}</a>`;
+            recBox.style.display = 'block';
+        }
+    });
+
+    dateInput.setAttribute('min', new Date().toISOString().split('T')[0]);
+    
+    dateInput.addEventListener('input', function() {
+        const selectedDate = this.value; // YYYY-MM-DD
+        const dateObj = new Date(selectedDate + "T00:00:00");
+        const day = dateObj.getDay(); // 0 = Sunday, 6 = Saturday
+        
+        const isWeekend = (day === 0 || day === 6);
+        const isHoliday = holidays2026.includes(selectedDate);
+
+        if (!isWeekend && !isHoliday) { 
+            dateError.style.display = 'block';
+            this.value = ''; 
+        } else {
+            dateError.style.display = 'none';
+        }
+    });
+
+    form.addEventListener('submit', function() {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffffff'] });
+    });
+</script>
+
+</body>
+</html>
